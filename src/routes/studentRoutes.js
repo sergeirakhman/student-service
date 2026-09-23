@@ -15,7 +15,7 @@ router.post("/student", addStudent);
 router.get("/student/:id", findStudent);
 router.delete("/student/:id", removeStudent);
 router.patch("/student/:id", updateStudent);
-router.post("/score/student/:id", addScore);
+router.patch("/score/student/:id", addScore);
 router.get("/students/name/:name", findStudentsByName);
 router.get("//quantity/students", countStudentsByNames);
 router.get("/students/exam/:exam/minscore/:minScore", findStudentsByMinScore);
