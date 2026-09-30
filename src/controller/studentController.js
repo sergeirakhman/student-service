@@ -26,7 +26,7 @@ export const updateStudent = async (req, res) => {
 };
 
 export const addScore = async (req, res) => {
-    const success = await studentService.addScore(req.body);
+    const success = await studentService.addScore(req.params.id, req.body.examName, req.body.score);
 
     success ? res.status(204).send() : res.status(404).send(err_404(req.params.id, req.params));
 };
@@ -37,7 +37,7 @@ export  const findStudentsByName = async (req, res) => {
 };
 
 export const countStudentsByNames = async (req, res) => {
-    const names = [].concat(req.params.names || []);
+    const names = [].concat(req.query.names || []);
     const counts = await studentService.countStudentsByNames(names);
     res.json(counts);
 };
