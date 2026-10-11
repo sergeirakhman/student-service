@@ -1,10 +1,14 @@
 import * as studentService from '../service/studentService.js'
 import {err_404} from "../errors/err.js";
+import {addStudentSchema, scoresSchema, updateStudentSchema} from "../validator/studentValidator.js";
 
 export const addStudent = async (req, res) => {
+    const {error} = addStudentSchema.validate(req.body);
+
+    if (error)
+        return res.status(400).send(error.details[0].message);
 
     const success = await studentService.addStudent(req.body);
-
     success ? res.status(204).send() : res.status(409).send('Not found');
 };
 
@@ -21,14 +25,20 @@ export const removeStudent = async (req, res) => {
 };
 
 export const updateStudent = async (req, res) => {
-    const student = await studentService.updateStudent(req.params.id, req.body);
+    const {error} = updateStudentSchema.validate(req.body);
+    if (error)
+        return res.status(400).send(error.details[0].message);
 
+    const student = await studentService.updateStudent(req.params.id, req.body);
     student ? res.json(student) : res.status(404).send(err_404(req.params.id, req.params));
 };
 
 export const addScore = async (req, res) => {
-    const success = await studentService.addScore(req.params.id, req.body.examName, req.body.score);
+    const {error} = scoresSchema.validate(req.body);
+    if (error)
+        return res.status(400).send(error.details[0].message);
 
+    const success = await studentService.addScore(req.params.id, req.body.examName, req.body.score);
     success ? res.status(204).send() : res.status(404).send(err_404(req.params.id, req.params));
 };
 
