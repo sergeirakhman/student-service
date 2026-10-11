@@ -2,6 +2,7 @@ import * as studentService from '../service/studentService.js'
 import {err_404} from "../errors/err.js";
 
 export const addStudent = async (req, res) => {
+
     const success = await studentService.addStudent(req.body);
 
     success ? res.status(204).send() : res.status(409).send('Not found');

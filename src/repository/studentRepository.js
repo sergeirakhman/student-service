@@ -1,28 +1,18 @@
-const students = new Map();
-let collection;
+import Student from '../model/student.js';
 
-export const init = db => collection = db.collection("college");
+export const createStudent = student => Student.create(student);
 
-export const createStudent = async ({id, name, password}) => {
-    const student = await collection.findOne({_id: id});
+export const findStudentById = id => Student.findById(id).select({password:0}).exec();
 
-    if (student) return false;
+export const removeStudent = id => Student.findByIdAndDelete(id).select({password:0}).exec();
 
-    await collection.insertOne({_id: id, name, password, scores: {}});
-    return true;
-}
+export const updateStudent = (id, data) => Student.findByIdAndUpdate(id, data, {returnDocument:'after'}).select({password:0}).exec();
 
-export const findStudentById = async id => await collection.findOne({ _id: id }, {projection: {password:0}});
+export const findStudentsByName = name => Student.find({name: new RegExp(`^${name}$`, 'i')});
 
-export const removeStudent = async id => await collection.findOneAndDelete({_id: id}, {projection: {password:0}});
-
-export const updateStudent = async (id, data) => await collection.findOneAndUpdate({_id: id}, {$set: data}, {projection: {scores:0}, returnDocument:'after'});
-
-export const findStudentsByName = async name => await collection.find({name: {$regex:`^${name}$`, $options:'i'}}, {projection: {password:0}}).toArray();
-
-export const countStudentsByNames = async names => {
+export const countStudentsByNames = names => {
     const regexNames = names.map(name => new RegExp(`^${name}$`, 'i'));
-    return await collection.countDocuments({name: {$in: regexNames}});
+    return Student.countDocuments({name: {$in: regexNames}});
 }
 
-export const findStudentsByMinScore = (exam, minScore) => [...students.values()].filter(s => s.scores[exam] >= minScore);
+export const findStudentsByMinScore = (exam, minScore) => Student.find({[`scores.${exam}`]: {$gte: minScore}}).select({password:0}).exec();

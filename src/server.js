@@ -1,10 +1,8 @@
 import express from 'express';
 import studentRoutes from "./routes/studentRoutes.js";
-import {MongoClient} from "mongodb";
-import {init} from "./repository/studentRepository.js";
+import mongoose from "mongoose";
 
 const port = process.env.PORT || 3000;
-const client = new MongoClient(process.env.MONGO_URI);
 
 const app = express();
 
@@ -18,9 +16,8 @@ app.use((req, res) =>
 
 async function startServer() {
     try {
-        await client.connect();
-        const dataBase = client.db(process.env.DB_NAME);
-        await init(dataBase);
+        await mongoose.connect(process.env.MONGO_URI, {dbName: process.env.DB_NAME});
+        console.log("MongoDB Connected!");
         app.listen(port, () => console.log(`Listening on port ${port}`));
     }
     catch (err) {
@@ -29,5 +26,3 @@ async function startServer() {
 }
 
 await startServer();
-
-//await startServer();
